@@ -19,6 +19,10 @@ import android.app.Application;
 
 import com.example.android.uamp.ui.FullScreenPlayerActivity;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
+import com.oda.sdk.ODATracker;
+import com.oda.sdk.Tracker;
+
+import java.net.MalformedURLException;
 
 import static com.google.android.libraries.cast.companionlibrary.cast.BaseCastManager.FEATURE_DEBUGGING;
 import static com.google.android.libraries.cast.companionlibrary.cast.BaseCastManager.FEATURE_WIFI_RECONNECT;
@@ -28,6 +32,8 @@ import static com.google.android.libraries.cast.companionlibrary.cast.BaseCastMa
  */
 public class UAMPApplication extends Application {
 
+    private Tracker odaTracker;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -35,5 +41,17 @@ public class UAMPApplication extends Application {
         VideoCastManager castManager = VideoCastManager.initialize(
                 getApplicationContext(), applicationId, FullScreenPlayerActivity.class, null);
         castManager.enableFeatures(FEATURE_WIFI_RECONNECT | FEATURE_DEBUGGING);
+
+        try {
+            odaTracker = ODATracker.getInstance(this).newTracker(1, "");
+            odaTracker.trackScreenView("/", "Main screen");
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Tracker getOdaTracker() {
+        return odaTracker;
     }
 }
